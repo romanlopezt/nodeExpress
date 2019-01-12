@@ -1,0 +1,4 @@
+-- Insert rows
+-- INSERT INTO burgers (burger_name, devoured) VALUES ('Classic', true);
+-- INSERT INTO burgers (burger_name, devoured) VALUES ('Bacon Cheese', true);
+-- INSERT INTO burgers (burger_name, devoured) VALUES ('Turkey', false);

@@ -1,0 +1,170 @@
+{{!-- Setup the index.handlebars to have the template that Handlebars can render onto. --}}
+<div class="container">
+  <div class="row">
+    <div class="col-md-12 center">
+      <div class="jumbotron">
+        <h1>Burger Logger</h1>
+        {{!-- making a post request on the submit button --}}
+        <h4>Add Your Burger Here!</h4>
+        <form id="addBurger" class="button-size">
+          <textarea type="text" name="burger"></textarea>
+          <button type="submit" class="btn btn-primary">Add your burger!</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-6 burgerBox">
+      <h2>Burger to eat...</h2>
+      <hr>
+      <div id="toEat">
+        <ul>
+          {{#each burgers}}
+          <li>
+            <div class="burgerDiv">
+              <p class="burgerText align-top" style="display: inline; font-size: 1.3em">Burger: {{this.burger_name}}</p>
+              <button class="devourButton btn btn-sm btn-primary" type="submit" data-id="{{id}}" name="{{burger_name}}" data-value="{{devoured}}"
+              >Devour</button>
+            </div>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+    </div>
+
+    <div class="col-sm-6 burgerBox">
+      <h2>Burgers devoured!</h2>
+      <hr>
+      <div id="devoured">
+         <ul>
+  {{#each burgers}}
+    {{#if this.devoured}}
+      <li>
+        {{this.burger_name}}
+
+
+           <button class="switchButton btn btn-sm btn-primary" type="submit" data-id="{{id}}" name="{{burger_name}}" data-value="0"
+              >Switch</button>
+      
+
+
+      </li>
+    {{/if}}
+  {{/each}}
+</ul>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{{!-- jQuery for devour button --}}
+<script type="text/javascript">
+
+  $(function () {
+
+    $("#addBurger").on("submit", function (event) {
+      // Make sure to preventDefault on a submit event.
+      event.preventDefault();
+
+      // create newBurger
+      var newBurger = {
+        burger_name: $("#addBurger [name=burger]").val().trim(),
+        devoured: false
+      };
+
+      // Send the POST request.
+      $.ajax("/burgers", {
+        type: "POST",
+        data: newBurger
+      }).then(
+        function () {
+          console.log("added a new burger");
+          // Reload the page to get the updated list
+          location.reload();
+        }
+      );
+    });
+
+    $(".devourButton").on("click", function (event) {
+      // Make sure to preventDefault on a submit event.
+      event.preventDefault();
+
+      console.log("click");
+      // Get the ID by finding an element with a "name" attribute equal to the string "id"
+      var id = $(this).data("id");
+      var burger_name = $(this).attr("name");
+      var devoured = $(".devourButton").attr("data-id");
+
+
+      console.log(burger_name);
+      console.log(burger_name);
+      console.log($(".devourButton").attr("data-id")); 
+      //values
+
+      var devouredBurgers = {
+        id: id,
+        burger_name: burger_name,
+        devoured: devoured
+      };
+      console.log(devouredBurgers);
+
+      // Send the PUT request.
+      $.ajax("/api/burgers/" + id, {
+        type: "PUT",
+        data: devouredBurgers
+      }).then(
+        function () {
+          console.log("updated id ", id);
+          $("#devoured").append(devouredBurgers);
+          // Reload the page to get the updated list
+          location.reload();
+          
+        }
+      );
+    });
+
+
+
+    $(".switchButton").on("click", function (event) {
+      // Make sure to preventDefault on a submit event.
+      event.preventDefault();
+
+      console.log("click");
+      // Get the ID by finding an element with a "name" attribute equal to the string "id"
+      var id = $(this).data("id");
+      var burger_name = $(this).attr("name");
+      var devoured = $(".switchButton").attr("data-value");
+
+
+      console.log("remover de devoured: "+devoured);
+      console.log(burger_name);
+      console.log($(".switchButton").attr("data-id")); 
+      //values
+
+      var devouredBurgers = {
+        id: id,
+        burger_name: burger_name,
+        devoured: devoured
+      };
+      console.log(devouredBurgers);
+
+      // Send the PUT request.
+      $.ajax("/api/burgers/" + id, {
+        type: "PUT",
+        data: devouredBurgers
+      }).then(
+        function () {
+          console.log("updated id ", id);
+          $("#devoured").append(devouredBurgers);
+          // Reload the page to get the updated list
+          location.reload();
+          
+        }
+      );
+    });
+
+
+  });
+</script>
